@@ -4,6 +4,11 @@
 
 Create a new balena app with a single command
 
+
+### Requirements
+
+* git
+
 ### Usage
 
 yarn:
