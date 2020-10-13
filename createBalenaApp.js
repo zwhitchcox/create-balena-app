@@ -56,25 +56,21 @@ function clone(name) {
 
 function install(name) {
   return Promise.all([
-    new Promise((res, rej) => {
-      const installProcess = cp
-        .spawn('npm', ['install'], {
-          stdio: 'inherit',
-          cwd: path.resolve(process.cwd(), name, 'server')
-        })
-      installProcess.on('exit', res)
-      installProcess.on('error', rej)
-    }),
-    new Promise((res, rej) => {
-      const installProcess = cp
-        .spawn('npm', ['install'], {
-          stdio: 'inherit',
-          cwd: path.resolve(process.cwd(), name, 'client')
-        })
-      installProcess.on('exit', res)
-      installProcess.on('error', rej)
-    }),
-  ])
+    npmInstall(path.resolve(process.cwd(), name, 'server')),
+    npmInstall(path.resolve(process.cwd(), name, 'client')),
+  ]).then(() => npmInstall(path.resolve(process.cwd(), name, 'client'))) // have to run this twice, not sure why
+}
+
+function npmInstall(dir) {
+  return new Promise((res, rej) => {
+    const installProcess = cp
+      .spawn('npm', ['install'], {
+        stdio: 'inherit',
+        cwd: dir,
+      })
+    installProcess.on('exit', res)
+    installProcess.on('error', rej)
+  })
 }
 
 function addIP(name, ip) {
